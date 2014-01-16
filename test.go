@@ -10,6 +10,7 @@ import (
 	"runtime"
 	"strconv"
 	//"strings"
+	"github.com/eggfly/gopattern/creation/singleton"
 	"sync"
 	"time"
 )
@@ -299,6 +300,58 @@ func Serve(queue chan *Request) {
 	}
 }
 
+// var s interface{} = nil
+// var singletonLock = sync.RWMutex{}
+
+func testRightSingleton() {
+	// global value auto thread safe?
+	c := make(chan bool)
+	f := func() {
+		if singleton.S == nil {
+			singleton.S = "value"
+			log.Println("init value")
+		}
+		c <- true
+	}
+	const COUNT = 1000000
+	for i := 0; i < COUNT; i++ {
+		go f()
+	}
+	for i := 0; i < COUNT; i++ {
+		<-c
+	}
+}
+func testWrongSingleton() {
+	c := make(chan bool)
+	var s interface{} = nil
+	f := func() {
+		if s == nil {
+			s = "value"
+			log.Println("init value")
+		}
+		c <- true
+	}
+	const COUNT = 1000000
+	for i := 0; i < COUNT; i++ {
+		go f()
+	}
+	for i := 0; i < COUNT; i++ {
+		<-c
+	}
+	// result may like this:
+	// 2014/01/16 23:07:00 init value
+	// 2014/01/16 23:07:00 init value
+	// 2014/01/16 23:07:00 init value
+	// 2014/01/16 23:07:00 init value
+	// 2014/01/16 23:07:00 init value
+	// 2014/01/16 23:07:00 init value
+	// 2014/01/16 23:07:00 init value
+}
+func testSingleton() {
+	runtime.GOMAXPROCS(runtime.NumCPU())
+	testRightSingleton()
+	testWrongSingleton()
+}
 func main() {
 	//testSocket()
 	//testGoroutine()
@@ -309,5 +362,6 @@ func main() {
 	//testTask()
 	//testSwitch()
 	//testOneWayChannel()
-	test2B()
+	//test2B()
+	testSingleton()
 }
