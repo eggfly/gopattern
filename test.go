@@ -350,6 +350,7 @@ func testWrongSingleton() {
 	// 2014/01/16 23:07:00 init value
 }
 func testSingleton() {
+	printTestHeader("testSingleton")
 	runtime.GOMAXPROCS(runtime.NumCPU())
 	testRightSingleton()
 	testWrongSingleton()
@@ -413,14 +414,27 @@ func testPackageVarThreadSafe() {
 }
 
 func testAbstractFactory() {
+	printTestHeader("testAbstractFactory")
 	var ibm abstractfactory.IComputerFactory = abstractfactory.IBMFactory{}
-	_ = ibm
+	desktop := ibm.CreateDesktopProduct()
+	laptop := ibm.CreateLaptopProduct()
+	desktop.PlayDesktop()
+	laptop.PlayLaptop()
+	desktop = abstractfactory.AppleFactory{}.CreateDesktopProduct()
+	desktop.PlayDesktop()
 }
 
 func testBuilder() {
+	printTestHeader("testBuilder")
 	var b builder.YoungHouseBuilder
 	_ = b
 }
+
+func printTestHeader(name string) {
+	const SIGN = " **** "
+	fmt.Println(SIGN + name + SIGN)
+}
+
 func main() {
 	//testSocket()
 	//testGoroutine()
@@ -435,7 +449,7 @@ func main() {
 	//testPackageVarAccessSpeed()
 	//testPackageVarThreadSafe()
 
-	//testSingleton()
-	//testAbstractFactory()
+	testSingleton()
+	testAbstractFactory()
 	testBuilder()
 }
