@@ -10,6 +10,8 @@ import (
 	"runtime"
 	"strconv"
 	//"strings"
+	"github.com/eggfly/gopattern/creation/abstractfactory"
+	"github.com/eggfly/gopattern/creation/builder"
 	"github.com/eggfly/gopattern/creation/singleton"
 	"sync"
 	"time"
@@ -308,12 +310,12 @@ func testRightSingleton() {
 	c := make(chan bool)
 	f := func() {
 		if singleton.S == nil {
-			singleton.S = "value"
 			log.Println("init value")
+			singleton.S = "value"
 		}
 		c <- true
 	}
-	const COUNT = 1000000
+	const COUNT = 10
 	for i := 0; i < COUNT; i++ {
 		go f()
 	}
@@ -326,12 +328,12 @@ func testWrongSingleton() {
 	var s interface{} = nil
 	f := func() {
 		if s == nil {
-			s = "value"
 			log.Println("init value")
+			s = "value"
 		}
 		c <- true
 	}
-	const COUNT = 1000000
+	const COUNT = 10
 	for i := 0; i < COUNT; i++ {
 		go f()
 	}
@@ -352,6 +354,73 @@ func testSingleton() {
 	testRightSingleton()
 	testWrongSingleton()
 }
+func testPackageVarAccessSpeed() {
+	runtime.GOMAXPROCS(runtime.NumCPU())
+
+	// a local var
+	var s interface{} = nil
+
+	// access package var
+	accessPackageVar := func() {
+		_ = singleton.S
+	}
+	// access local var
+	accessLocalVar := func() {
+		_ = s
+	}
+
+	ch := make(chan bool)
+	// benchmark function
+	benchmark := func(accessFunc func()) {
+		t := time.Now()
+		const COUNT = 100000
+		for i := 0; i < COUNT; i++ {
+			go func(accessFunc func()) {
+				accessFunc()
+				ch <- true
+			}(accessFunc)
+		}
+		// wait for end
+		for i := 0; i < COUNT; i++ {
+			<-ch
+		}
+
+		fmt.Println("time:", time.Now().Sub(t))
+	}
+
+	benchmark(accessPackageVar)
+	benchmark(accessLocalVar)
+}
+
+func testPackageVarThreadSafe() {
+	runtime.GOMAXPROCS(runtime.NumCPU())
+	ch := make(chan bool)
+
+	const COUNT = 100000
+	for i := 0; i < COUNT; i++ {
+		go func() {
+			singleton.I++
+			ch <- true
+		}()
+	}
+	// wait for end
+	for i := 0; i < COUNT; i++ {
+		<-ch
+	}
+
+	fmt.Println("singleton.I:", singleton.I)
+	// finally it's not safe
+}
+
+func testAbstractFactory() {
+	var ibm abstractfactory.IComputerFactory = abstractfactory.IBMFactory{}
+	_ = ibm
+}
+
+func testBuilder() {
+	var b builder.YoungHouseBuilder
+	_ = b
+}
 func main() {
 	//testSocket()
 	//testGoroutine()
@@ -363,5 +432,10 @@ func main() {
 	//testSwitch()
 	//testOneWayChannel()
 	//test2B()
-	testSingleton()
+	//testPackageVarAccessSpeed()
+	//testPackageVarThreadSafe()
+
+	//testSingleton()
+	//testAbstractFactory()
+	testBuilder()
 }
