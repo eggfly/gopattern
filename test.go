@@ -12,6 +12,7 @@ import (
 	//"strings"
 	"github.com/eggfly/gopattern/creation/abstractfactory"
 	"github.com/eggfly/gopattern/creation/builder"
+	"github.com/eggfly/gopattern/creation/factorymethod"
 	"github.com/eggfly/gopattern/creation/singleton"
 	"sync"
 	"time"
@@ -426,8 +427,14 @@ func testAbstractFactory() {
 
 func testBuilder() {
 	printTestHeader("testBuilder")
-	var b builder.YoungHouseBuilder
-	_ = b
+	director := builder.BuildHouseDirector{}
+	director.SetHouseBuilder(&builder.YoungHouseBuilder{})
+	director.BuildHouse()
+	fmt.Println(director.GetHouse())
+}
+func testFactoryMethod() {
+	var factory factorymethod.IButtonFactory = factorymethod.WindowsButtonFactory{}
+	_ = factory.CreateButton()
 }
 
 func printTestHeader(name string) {
@@ -452,4 +459,5 @@ func main() {
 	testSingleton()
 	testAbstractFactory()
 	testBuilder()
+	testFactoryMethod()
 }

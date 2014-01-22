@@ -1,5 +1,7 @@
 package abstractfactory
 
+// 对创建新的工厂的开放,面向产品族
+
 import (
 	"fmt"
 )
