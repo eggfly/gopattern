@@ -16,6 +16,8 @@ import (
 	"github.com/eggfly/gopattern/creation/factorymethod"
 	"github.com/eggfly/gopattern/creation/prototype"
 	"github.com/eggfly/gopattern/creation/singleton"
+	"math"
+	"math/big"
 	"sync"
 	"time"
 )
@@ -305,6 +307,40 @@ func Serve(queue chan *Request) {
 	}
 }
 
+func testFibonacci() {
+	printTestHeader("testFibonacci")
+	sqrt5 := math.Sqrt(5)
+	const1 := sqrt5 / 5
+	const2 := (sqrt5 + 1) / 2
+	const3 := (1 - sqrt5) / 2
+	round := func(f float64) int64 {
+		return int64(math.Floor(f + 0.5))
+	}
+	fibonacciFormula := func(n int64) int64 {
+		nn := float64(n)
+		return round(const1 * (math.Pow(const2, nn) - math.Pow(const3, nn)))
+	}
+	t := time.Now()
+	for i := 0; i < 10; i++ {
+		fmt.Println(fibonacciFormula(int64(i)))
+	}
+	fmt.Println(time.Now().Sub(t))
+}
+
+func testDecimal() {
+	printTestHeader("testDecimal")
+	i := big.NewInt(math.MaxInt64)
+	i.Mul(i, i)
+	i.Mul(i, i)
+	i.Mul(i, i)
+	i.Mul(i, i)
+	i.Mul(i, i)
+	i.Mul(i, i)
+	fmt.Println(i)
+	ii := new(big.Int)
+	fmt.Println(ii)
+}
+
 // var s interface{} = nil
 // var singletonLock = sync.RWMutex{}
 
@@ -468,6 +504,7 @@ func testTemplateMethod() {
 	game.IGame = game // this
 	game.PlayOneGame(4)
 }
+
 func printTestHeader(name string) {
 	const SIGN = " **** "
 	println(SIGN + name + SIGN)
@@ -486,6 +523,8 @@ func main() {
 	//test2B()
 	//testPackageVarAccessSpeed()
 	//testPackageVarThreadSafe()
+	testFibonacci()
+	testDecimal()
 	testCreatePrivate()
 
 	testSingleton()
