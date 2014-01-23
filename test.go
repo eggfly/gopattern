@@ -10,6 +10,7 @@ import (
 	"runtime"
 	"strconv"
 	//"strings"
+	"github.com/eggfly/gopattern/behavior/templatemethod"
 	"github.com/eggfly/gopattern/creation/abstractfactory"
 	"github.com/eggfly/gopattern/creation/builder"
 	"github.com/eggfly/gopattern/creation/factorymethod"
@@ -455,6 +456,18 @@ func testPrototype() {
 	fmt.Println(bullet2)
 }
 
+func testCreatePrivate() {
+	_ = templatemethod.CreatePrivate()
+}
+
+func testTemplateMethod() {
+	monopoly := templatemethod.Monopoly{}
+	monopoly.IGame = monopoly // this
+	monopoly.PlayOneGame(3)
+	game := templatemethod.Chess{}
+	game.IGame = game // this
+	game.PlayOneGame(4)
+}
 func printTestHeader(name string) {
 	const SIGN = " **** "
 	println(SIGN + name + SIGN)
@@ -473,10 +486,12 @@ func main() {
 	//test2B()
 	//testPackageVarAccessSpeed()
 	//testPackageVarThreadSafe()
+	testCreatePrivate()
 
 	testSingleton()
 	testAbstractFactory()
 	testBuilder()
 	testFactoryMethod()
 	testPrototype()
+	testTemplateMethod()
 }
