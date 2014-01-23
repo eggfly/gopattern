@@ -13,6 +13,7 @@ import (
 	"github.com/eggfly/gopattern/creation/abstractfactory"
 	"github.com/eggfly/gopattern/creation/builder"
 	"github.com/eggfly/gopattern/creation/factorymethod"
+	"github.com/eggfly/gopattern/creation/prototype"
 	"github.com/eggfly/gopattern/creation/singleton"
 	"sync"
 	"time"
@@ -432,14 +433,31 @@ func testBuilder() {
 	director.BuildHouse()
 	fmt.Println(director.GetHouse())
 }
+
 func testFactoryMethod() {
+	printTestHeader("testFactoryMethod")
 	var factory factorymethod.IButtonFactory = factorymethod.WindowsButtonFactory{}
-	_ = factory.CreateButton()
+	factory.CreateButton().Click()
+	factory = factorymethod.MacButtonFactory{}
+	factory.CreateButton().Click()
+}
+
+func testPrototype() {
+	printTestHeader("testPrototype")
+	templateBullet := prototype.Bullet{}
+	templateBullet.Init()
+	templateBullet.X = 2
+
+	bullet1 := prototype.Bullet{}
+	bullet1.CopyFrom(templateBullet)
+	fmt.Println(bullet1)
+	bullet2 := bullet1.Clone()
+	fmt.Println(bullet2)
 }
 
 func printTestHeader(name string) {
 	const SIGN = " **** "
-	fmt.Println(SIGN + name + SIGN)
+	println(SIGN + name + SIGN)
 }
 
 func main() {
@@ -460,4 +478,5 @@ func main() {
 	testAbstractFactory()
 	testBuilder()
 	testFactoryMethod()
+	testPrototype()
 }
