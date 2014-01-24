@@ -10,6 +10,7 @@ import (
 	"runtime"
 	"strconv"
 	//"strings"
+	"github.com/eggfly/gopattern/behavior/nullobject"
 	"github.com/eggfly/gopattern/behavior/templatemethod"
 	"github.com/eggfly/gopattern/creation/abstractfactory"
 	"github.com/eggfly/gopattern/creation/builder"
@@ -505,6 +506,14 @@ func testTemplateMethod() {
 	game.PlayOneGame(4)
 }
 
+func testNullObject() {
+	printTestHeader("testNullObject")
+	n := nullobject.Null
+	n.Do()
+	n = nullobject.ConcreteImpl{}
+	n.Do()
+}
+
 func printTestHeader(name string) {
 	const SIGN = " **** "
 	println(SIGN + name + SIGN)
@@ -533,4 +542,5 @@ func main() {
 	testFactoryMethod()
 	testPrototype()
 	testTemplateMethod()
+	testNullObject()
 }
