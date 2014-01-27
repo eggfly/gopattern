@@ -10,6 +10,8 @@ import (
 	"runtime"
 	"strconv"
 	//"strings"
+	"encoding/gob"
+	"encoding/json"
 	"github.com/eggfly/gopattern/behavior/nullobject"
 	"github.com/eggfly/gopattern/behavior/templatemethod"
 	"github.com/eggfly/gopattern/creation/abstractfactory"
@@ -514,6 +516,21 @@ func testNullObject() {
 	n.Do()
 }
 
+func testJSON() {
+	printTestHeader("testJSON")
+	type Message struct {
+		A, B int
+	}
+	m := Message{1, 999}
+	b, err := json.Marshal(m)
+	fmt.Println(string(b), err)
+}
+
+func testGob() {
+	printTestHeader("testGob")
+
+}
+
 func printTestHeader(name string) {
 	const SIGN = " **** "
 	println(SIGN + name + SIGN)
@@ -535,6 +552,8 @@ func main() {
 	testFibonacci()
 	testDecimal()
 	testCreatePrivate()
+	testJSON()
+	testGob()
 
 	testSingleton()
 	testAbstractFactory()
