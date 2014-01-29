@@ -10,7 +10,7 @@ import (
 	"runtime"
 	"strconv"
 	//"strings"
-	"encoding/gob"
+	//"encoding/gob"
 	"encoding/json"
 	"github.com/eggfly/gopattern/behavior/nullobject"
 	"github.com/eggfly/gopattern/behavior/templatemethod"
